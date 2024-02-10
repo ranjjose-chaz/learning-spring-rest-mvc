@@ -25,7 +25,7 @@ public class CustomerController {
 
     @RequestMapping("/{customerId}")
     public Customer getCustomerById(@PathVariable("customerId") UUID id){
-        return customerService.geCustomerById(id);
+        return customerService.getCustomerById(id);
     }
 
     @PostMapping

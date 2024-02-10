@@ -55,7 +55,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer geCustomerById(UUID id) {
+    public Customer getCustomerById(UUID id) {
         return customerMap.get(id);
     }
 
