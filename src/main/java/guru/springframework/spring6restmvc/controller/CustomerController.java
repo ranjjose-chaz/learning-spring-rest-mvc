@@ -30,6 +30,7 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity saveCustomer(@RequestBody Customer customer) {
+        System.out.println("CustomerController::saveCustomer");
         Customer savedCustomer = customerService.saveCustomer(customer);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/customer/"+savedCustomer.getId().toString());

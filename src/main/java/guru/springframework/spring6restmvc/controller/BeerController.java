@@ -35,6 +35,7 @@ public class BeerController {
 
     @PostMapping
     public ResponseEntity saveBeer(@RequestBody Beer beer) {
+        System.out.println(" ** BeerController::saveBeer ** ");
         Beer savedBeer = beerService.saveBeer(beer);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location",  "/api/v1/beer/" + savedBeer.getId().toString());

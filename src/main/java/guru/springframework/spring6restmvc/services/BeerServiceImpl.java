@@ -73,6 +73,7 @@ public class BeerServiceImpl implements BeerService {
 
     @Override
     public Beer saveBeer(Beer beer) {
+        System.out.println("** BeerServiceImpl.saveBeer **");
         Beer savedBeer =  Beer.builder()
                                 .id(UUID.randomUUID())
                                 .createdDate(LocalDateTime.now())
