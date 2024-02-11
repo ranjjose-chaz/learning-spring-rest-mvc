@@ -1,5 +1,6 @@
 package guru.springframework.spring6restmvc.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.springframework.spring6restmvc.model.Customer;
 import guru.springframework.spring6restmvc.services.CustomerService;
@@ -15,9 +16,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest(CustomerController.class)
 class CustomerControllerTest {
@@ -94,6 +96,19 @@ class CustomerControllerTest {
                 .andExpect(MockMvcResultMatchers.header().exists("Location"));
 
 
+
+    }
+
+    @Test
+    void updateCustomerById() throws Exception {
+        Customer aCustomer = customerServiceImpl.getCustomerList().get(0);
+        mockMvc.perform(put("/api/v1/customer/"+aCustomer.getId().toString())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(aCustomer)))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        verify(customerService).updateCustomerById(eq(aCustomer.getId()), any(Customer.class));
 
     }
 }
