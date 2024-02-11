@@ -41,6 +41,18 @@ class CustomerControllerTest {
     }
 
     @Test
+    public void customerList() throws Exception {
+        System.out.println("CustomerControllerTest::customerList");
+        given(customerService.getCustomerList()).willReturn(customerServiceImpl.getCustomerList());
+        mockMvc.perform(get("/api/v1/customer").accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.length()", is(3)));
+
+    }
+
+
+    @Test
     void getCustomerList() throws Exception {
         given(customerService.getCustomerList()).willReturn(customerServiceImpl.getCustomerList());
         mockMvc.perform(get("/api/v1/customer").accept(MediaType.APPLICATION_JSON))

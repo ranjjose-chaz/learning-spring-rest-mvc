@@ -20,6 +20,7 @@ public class CustomerController {
 
     @RequestMapping()
     public List<Customer> getCustomerList() {
+        System.out.println("CustomerController::getCustomerList");
         return customerService.getCustomerList();
     }
 

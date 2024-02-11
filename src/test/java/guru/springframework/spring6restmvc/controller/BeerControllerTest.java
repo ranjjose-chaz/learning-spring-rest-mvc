@@ -15,12 +15,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.SQLOutput;
+import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //@SpringBootTest
@@ -91,7 +93,7 @@ class BeerControllerTest {
         given(beerService.saveBeer(any(Beer.class))).willReturn(beerServiceImpl.listBeers().get(1));
 
         mockMvc.perform(post("/api/v1/beer")
-                .accept(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isCreated())
@@ -99,6 +101,19 @@ class BeerControllerTest {
                 .andExpect(header().exists("Location"));
 
         System.out.println("Beers Count -> "+ beerServiceImpl.listBeers().size());
+
+    }
+
+    @Test
+    void updateBeerById() throws Exception {
+        System.out.println("BeerControllerTest.updateBeerById");
+        Beer beer = beerServiceImpl.listBeers().get(0);
+
+        mockMvc.perform(put("/api/v1/beer/"+beer.getId().toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beer)));
+
+        verify(beerService).updateBeerById(eq(beer.getId()), any(Beer.class));
 
     }
 }
