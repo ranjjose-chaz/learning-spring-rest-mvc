@@ -14,37 +14,40 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(("/api/v1/customer"))
+//@RequestMapping(("/api/v1/customer"))
 public class CustomerController {
+
+    public static final String CUSTOMER_PATH = "/api/v1/customer";
+    public static final String CUSTOMER_PATH_ID = CUSTOMER_PATH + "/{customerId}";
     private final CustomerService customerService;
 
-    @RequestMapping()
+    @GetMapping(CUSTOMER_PATH)
     public List<Customer> getCustomerList() {
         System.out.println("CustomerController::getCustomerList");
         return customerService.getCustomerList();
     }
 
-    @RequestMapping("/{customerId}")
+    @GetMapping(CUSTOMER_PATH_ID)
     public Customer getCustomerById(@PathVariable("customerId") UUID id){
         return customerService.getCustomerById(id);
     }
 
-    @PostMapping
+    @PostMapping(CUSTOMER_PATH)
     public ResponseEntity saveCustomer(@RequestBody Customer customer) {
         System.out.println("CustomerController::saveCustomer");
         Customer savedCustomer = customerService.saveCustomer(customer);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "/api/v1/customer/"+savedCustomer.getId().toString());
+        headers.add("Location", CUSTOMER_PATH + "/" +savedCustomer.getId().toString());
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{customerId}")
+    @PutMapping(CUSTOMER_PATH_ID)
     public ResponseEntity updateCustomerById(@PathVariable("customerId") UUID customerId, @RequestBody Customer customer) {
         customerService.updateCustomerById(customerId, customer);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{customerId}")
+    @DeleteMapping(CUSTOMER_PATH_ID)
     public ResponseEntity deleteCustomerById(@PathVariable("customerId") UUID customerId) {
         customerService.deleteCustomerById(customerId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);

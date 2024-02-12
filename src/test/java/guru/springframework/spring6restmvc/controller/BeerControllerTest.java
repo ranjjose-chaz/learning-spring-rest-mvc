@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.sql.SQLOutput;
 import java.util.UUID;
 
+import static guru.springframework.spring6restmvc.controller.BeerController.BEER_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -59,7 +60,7 @@ class BeerControllerTest {
         //given(beerService.getBeerById(any(UUID.class))).willReturn(firstBeer);
         given(beerService.getBeerById(firstBeer.getId())).willReturn(firstBeer);
 
-        mockMvc.perform(get("/api/v1/beer/"+firstBeer.getId())
+        mockMvc.perform(get(BEER_PATH+"/"+firstBeer.getId())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -76,7 +77,7 @@ class BeerControllerTest {
         System.out.println("BeerControllerTest::listBeers");
         given(beerService.listBeers()).willReturn(beerServiceImpl.listBeers());
 
-        mockMvc.perform(get("/api/v1/beer")
+        mockMvc.perform(get(BEER_PATH)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -95,7 +96,7 @@ class BeerControllerTest {
 
         given(beerService.saveBeer(any(Beer.class))).willReturn(beerServiceImpl.listBeers().get(1));
 
-        mockMvc.perform(post("/api/v1/beer")
+        mockMvc.perform(post(BEER_PATH)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
@@ -112,7 +113,7 @@ class BeerControllerTest {
         System.out.println("BeerControllerTest.updateBeerById");
         Beer beer = beerServiceImpl.listBeers().get(0);
 
-        mockMvc.perform(put("/api/v1/beer/"+beer.getId().toString())
+        mockMvc.perform(put(BEER_PATH+"/"+beer.getId().toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isNoContent());
@@ -124,7 +125,7 @@ class BeerControllerTest {
     @Test
     void deleteBeerById() throws Exception {
         Beer beerToBeDeleted = beerServiceImpl.listBeers().get(0);
-        mockMvc.perform(delete("/api/v1/beer/"+beerToBeDeleted.getId().toString())
+        mockMvc.perform(delete(BEER_PATH+"/"+beerToBeDeleted.getId().toString())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
