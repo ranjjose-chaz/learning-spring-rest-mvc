@@ -78,7 +78,7 @@ class CustomerControllerTest {
         given(customerService.getCustomerById(firstCustomer.getId()))
                 .willReturn(firstCustomer);
 
-        mockMvc.perform(get(CUSTOMER_PATH + "/" +firstCustomer.getId().toString())
+        mockMvc.perform(get(CUSTOMER_PATH_ID, firstCustomer.getId().toString())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -111,7 +111,7 @@ class CustomerControllerTest {
     @Test
     void updateCustomerById() throws Exception {
         Customer aCustomer = customerServiceImpl.getCustomerList().get(0);
-        mockMvc.perform(put(CUSTOMER_PATH+ "/"+aCustomer.getId().toString())
+        mockMvc.perform(put(CUSTOMER_PATH_ID, aCustomer.getId().toString())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(aCustomer)))
@@ -124,7 +124,7 @@ class CustomerControllerTest {
     @Test
     void deleteCustomerById() throws Exception {
         Customer customerToBeDeleted = customerServiceImpl.getCustomerList().get(0);
-        mockMvc.perform(delete(CUSTOMER_PATH + "/"+customerToBeDeleted.getId().toString())
+        mockMvc.perform(delete(CUSTOMER_PATH_ID, customerToBeDeleted.getId().toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
