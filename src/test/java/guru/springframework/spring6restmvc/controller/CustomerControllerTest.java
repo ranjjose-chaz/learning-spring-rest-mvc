@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CustomerController.class)
 class CustomerControllerTest {
@@ -57,7 +58,7 @@ class CustomerControllerTest {
         given(customerService.getCustomerList()).willReturn(customerServiceImpl.getCustomerList());
         mockMvc.perform(get(CUSTOMER_PATH).accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()", is(3)));
 
     }
@@ -67,7 +68,7 @@ class CustomerControllerTest {
     void getCustomerList() throws Exception {
         given(customerService.getCustomerList()).willReturn(customerServiceImpl.getCustomerList());
         mockMvc.perform(get(CUSTOMER_PATH).accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()", is(3)));
     }
@@ -80,7 +81,7 @@ class CustomerControllerTest {
 
         mockMvc.perform(get(CUSTOMER_PATH_ID, firstCustomer.getId().toString())
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(firstCustomer.getId().toString())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name", is(firstCustomer.getName())));
@@ -101,7 +102,7 @@ class CustomerControllerTest {
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(aCustomer)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.header().exists("Location"));
 
 
@@ -115,7 +116,7 @@ class CustomerControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(aCustomer)))
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                .andExpect(status().isNoContent());
 
         verify(customerService).updateCustomerById(eq(aCustomer.getId()), any(Customer.class));
 
@@ -127,11 +128,18 @@ class CustomerControllerTest {
         mockMvc.perform(delete(CUSTOMER_PATH_ID, customerToBeDeleted.getId().toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                .andExpect(status().isNoContent());
 
         //verify(customerService).deleteCustomerById(eq(customerToBeDeleted.getId()));
         ArgumentCaptor<UUID> argumentCaptor = ArgumentCaptor.forClass(UUID.class);
         verify(customerService).deleteCustomerById(argumentCaptor.capture());
         assertThat(customerToBeDeleted.getId()).isEqualTo(argumentCaptor.getValue());
+    }
+
+    @Test
+    void getCustomerByIdNotFound() throws Exception {
+        given(customerService.getCustomerById(any(UUID.class))).willThrow(new NotFoundException());
+
+        mockMvc.perform(get(CUSTOMER_PATH_ID, UUID.randomUUID())).andExpect(status().isNotFound());
     }
 }
