@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static guru.springframework.spring6restmvc.controller.CustomerController.CUSTOMER_PATH;
@@ -77,7 +78,7 @@ class CustomerControllerTest {
     void getCustomerById() throws Exception {
         Customer firstCustomer = customerServiceImpl.getCustomerList().get(0);
         given(customerService.getCustomerById(firstCustomer.getId()))
-                .willReturn(firstCustomer);
+                .willReturn(Optional.of(firstCustomer));
 
         mockMvc.perform(get(CUSTOMER_PATH_ID, firstCustomer.getId().toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -138,7 +139,7 @@ class CustomerControllerTest {
 
     @Test
     void getCustomerByIdNotFound() throws Exception {
-        given(customerService.getCustomerById(any(UUID.class))).willThrow(new NotFoundException());
+        given(customerService.getCustomerById(any(UUID.class))).willReturn(Optional.empty());
 
         mockMvc.perform(get(CUSTOMER_PATH_ID, UUID.randomUUID())).andExpect(status().isNotFound());
     }

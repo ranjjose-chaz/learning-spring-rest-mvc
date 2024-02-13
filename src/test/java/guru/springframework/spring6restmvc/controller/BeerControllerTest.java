@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.sql.SQLOutput;
+import java.util.Optional;
 import java.util.UUID;
 
 import static guru.springframework.spring6restmvc.controller.BeerController.BEER_PATH;
@@ -59,14 +60,14 @@ class BeerControllerTest {
         System.out.println("BeerControllerTest::getBeerById");
         Beer firstBeer = beerServiceImpl.listBeers().get(0);
         //given(beerService.getBeerById(any(UUID.class))).willReturn(firstBeer);
-        given(beerService.getBeerById(firstBeer.getId())).willReturn(firstBeer);
+        given(beerService.getBeerById(firstBeer.getId())).willReturn(Optional.of(firstBeer));
 
         mockMvc.perform(get(BEER_PATH_ID, firstBeer.getId())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(firstBeer.getId().toString())))
-                .andExpect(jsonPath("$.beerName", is(firstBeer.getBeerName().toString())))
+                .andExpect(jsonPath("$.beerName", is(firstBeer.getBeerName())))
                 ;
 
         //beerController.getBeerById(UUID.randomUUID());
@@ -126,7 +127,7 @@ class BeerControllerTest {
     @Test
     void getBeerByIdNotFound() throws Exception {
 
-        given(beerService.getBeerById(any(UUID.class))).willThrow(new NotFoundException());
+        given(beerService.getBeerById(any(UUID.class))).willReturn(Optional.empty());
 
         mockMvc.perform(get(BEER_PATH_ID, UUID.randomUUID()))
                 .andExpect(status().isNotFound());
