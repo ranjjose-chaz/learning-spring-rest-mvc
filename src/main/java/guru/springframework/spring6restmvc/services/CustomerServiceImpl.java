@@ -1,6 +1,6 @@
 package guru.springframework.spring6restmvc.services;
 
-import guru.springframework.spring6restmvc.model.Customer;
+import guru.springframework.spring6restmvc.model.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +11,12 @@ import java.util.*;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    private Map<UUID, Customer> customerMap;
+    private Map<UUID, CustomerDTO> customerMap;
 
     public CustomerServiceImpl() {
         customerMap = new HashMap<>();
 
-        Customer cust1 = Customer
+        CustomerDTO cust1 = CustomerDTO
                 .builder()
                 .id(UUID.randomUUID())
                 .name("Kingfisher")
@@ -25,7 +25,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .lastModifiedDate(LocalDateTime.now())
                 .build();
 
-        Customer cust2 = Customer
+        CustomerDTO cust2 = CustomerDTO
                 .builder()
                 .id(UUID.randomUUID())
                 .name("Jawan")
@@ -34,7 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .lastModifiedDate(LocalDateTime.now())
                 .build();
 
-        Customer cust3 = Customer
+        CustomerDTO cust3 = CustomerDTO
                 .builder()
                 .id(UUID.randomUUID())
                 .name("Ceaser")
@@ -50,45 +50,45 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<Customer> getCustomerList() {
+    public List<CustomerDTO> getCustomerList() {
         return new ArrayList<>(customerMap.values());
     }
 
     @Override
-    public Optional<Customer> getCustomerById(UUID id) {
+    public Optional<CustomerDTO> getCustomerById(UUID id) {
         return Optional.of(customerMap.get(id));
     }
 
     @Override
-    public Customer saveCustomer(Customer customer) {
+    public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
         System.out.println("CustomerServiceImpl::saveCustomer");
-        Customer savedCustomer = Customer.builder()
+        CustomerDTO savedCustomerDTO = CustomerDTO.builder()
                 .id(UUID.randomUUID())
-                .name(customer.getName())
-                .version(customer.getVersion())
+                .name(customerDTO.getName())
+                .version(customerDTO.getVersion())
                 .createdDate(LocalDateTime.now())
                 .lastModifiedDate(LocalDateTime.now())
                 .build();
-        customerMap.put(savedCustomer.getId(), savedCustomer);
-        return savedCustomer;
+        customerMap.put(savedCustomerDTO.getId(), savedCustomerDTO);
+        return savedCustomerDTO;
     }
 
     @Override
-    public void updateCustomerById(UUID customerId, Customer customer) {
-        Customer existingCustomer = customerMap.get(customerId);
-        existingCustomer.setName(customer.getName());
-        existingCustomer.setVersion(customer.getVersion());
-        existingCustomer.setLastModifiedDate(LocalDateTime.now());
+    public void updateCustomerById(UUID customerId, CustomerDTO customerDTO) {
+        CustomerDTO existingCustomerDTO = customerMap.get(customerId);
+        existingCustomerDTO.setName(customerDTO.getName());
+        existingCustomerDTO.setVersion(customerDTO.getVersion());
+        existingCustomerDTO.setLastModifiedDate(LocalDateTime.now());
 
     }
 
     @Override
     public void deleteCustomerById(UUID customerId) {
-        Customer existingCustomer = customerMap.remove(customerId);
-        if(existingCustomer == null) {
+        CustomerDTO existingCustomerDTO = customerMap.remove(customerId);
+        if(existingCustomerDTO == null) {
             log.warn("No customer found with id: "+customerId);
         } else {
-            log.debug("Removed customer -> " + existingCustomer);
+            log.debug("Removed customer -> " + existingCustomerDTO);
         }
 
     }
