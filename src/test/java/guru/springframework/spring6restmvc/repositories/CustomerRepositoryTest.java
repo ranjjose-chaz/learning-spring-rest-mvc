@@ -17,9 +17,16 @@ class CustomerRepositoryTest {
     @Test
     public void testCustomerSave() {
         Customer customer = customerRepository.save(Customer.builder().name("Undampori Makers Pvt. Ltd.").build());
-
+        System.out.println(customerRepository.count());
         assertThat(customer).isNotNull();
         assertThat(customer.getId()).isNotNull();
+    }
+
+
+    @Test
+    public void testCustomerRecordCount() {
+        System.out.println(customerRepository.count());
+        assertTrue(true);
     }
 
 }
