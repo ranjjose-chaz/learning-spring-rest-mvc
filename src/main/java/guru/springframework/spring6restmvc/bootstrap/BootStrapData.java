@@ -21,22 +21,29 @@ public class BootStrapData implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         Beer beer1 = Beer.builder()
-                        .beerName("Beer1")
+                        .beerName("Beer 1")
                         .beerStyle(BeerStyle.A)
                         .quantityOnHand(100)
                         .createdDate(LocalDateTime.now())
                 .build();
 
         Beer beer2 = Beer.builder()
-                .beerName("Beer2")
+                .beerName("Beer 2")
                 .beerStyle(BeerStyle.B)
                 .quantityOnHand(200)
                 .createdDate(LocalDateTime.now())
                 .build();
 
+        Beer beer3 = Beer.builder()
+                .beerName("Beer 2")
+                .beerStyle(BeerStyle.C)
+                .quantityOnHand(250)
+                .createdDate(LocalDateTime.now())
+                .build();
 
 
-        beerRepository.saveAll(Arrays.asList(beer1, beer2));
+
+        beerRepository.saveAll(Arrays.asList(beer1, beer2, beer3));
 
         Customer cust1 = Customer.builder()
                         .name("Customer1")
@@ -46,7 +53,11 @@ public class BootStrapData implements CommandLineRunner {
                 .name("Customer2")
                 .build();
 
-        customerRepository.saveAll(Arrays.asList(cust1, cust2));
+        Customer cust3 = Customer.builder()
+                .name("Customer3")
+                .build();
+
+        customerRepository.saveAll(Arrays.asList(cust1, cust2, cust3));
 
 
 
