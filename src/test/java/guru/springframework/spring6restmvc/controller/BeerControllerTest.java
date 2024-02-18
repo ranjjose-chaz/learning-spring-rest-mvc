@@ -111,6 +111,8 @@ class BeerControllerTest {
         System.out.println("BeerControllerTest.updateBeerById");
         BeerDTO beerDTO = beerServiceImpl.listBeers().get(0);
 
+        given(beerService.updateBeerById(any(UUID.class), any(BeerDTO.class))).willReturn(Optional.of(beerDTO));
+
         mockMvc.perform(put(BEER_PATH_ID, beerDTO.getId().toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(beerDTO)))
