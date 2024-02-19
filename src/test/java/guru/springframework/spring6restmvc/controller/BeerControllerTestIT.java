@@ -107,9 +107,15 @@ class BeerControllerTestIT {
 
         Beer updatedBeer = beerRepository.findById(beer.getId()).get();
         assertEquals(updatedBeer.getBeerName(), beerDTO.getBeerName());
+    }
 
-
-
-
+    @Transactional
+    @Rollback
+    @Test
+    void deleteById() {
+        Beer aBeer = beerRepository.findAll().get(0);
+        ResponseEntity responseEntity = beerController.deleteById(aBeer.getId());
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        assertThat(beerRepository.findById(aBeer.getId())).isEmpty();
     }
 }
