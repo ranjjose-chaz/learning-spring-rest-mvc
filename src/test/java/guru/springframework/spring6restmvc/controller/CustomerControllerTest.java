@@ -1,6 +1,7 @@
 package guru.springframework.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import guru.springframework.spring6restmvc.entities.Customer;
 import guru.springframework.spring6restmvc.model.CustomerDTO;
 import guru.springframework.spring6restmvc.services.CustomerService;
 import guru.springframework.spring6restmvc.services.CustomerServiceImpl;
@@ -111,6 +112,9 @@ class CustomerControllerTest {
     @Test
     void updateCustomerById() throws Exception {
         CustomerDTO aCustomerDTO = customerServiceImpl.getCustomerList().get(0);
+        given(customerService.updateCustomerById(
+                any(UUID.class),
+                any(CustomerDTO.class))).willReturn(Optional.of(aCustomerDTO));
         mockMvc.perform(put(CUSTOMER_PATH_ID, aCustomerDTO.getId().toString())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,8 +127,9 @@ class CustomerControllerTest {
 
     @Test
     void deleteCustomerById() throws Exception {
-        CustomerDTO customerDTOToBeDeleted = customerServiceImpl.getCustomerList().get(0);
-        mockMvc.perform(delete(CUSTOMER_PATH_ID, customerDTOToBeDeleted.getId().toString())
+        CustomerDTO aCustomerDTO = customerServiceImpl.getCustomerList().get(0);
+        given(customerService.deleteCustomerById(any(UUID.class))).willReturn(Boolean.TRUE);
+        mockMvc.perform(delete(CUSTOMER_PATH_ID, aCustomerDTO.getId().toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
@@ -132,7 +137,7 @@ class CustomerControllerTest {
         //verify(customerService).deleteCustomerById(eq(customerToBeDeleted.getId()));
         ArgumentCaptor<UUID> argumentCaptor = ArgumentCaptor.forClass(UUID.class);
         verify(customerService).deleteCustomerById(argumentCaptor.capture());
-        assertThat(customerDTOToBeDeleted.getId()).isEqualTo(argumentCaptor.getValue());
+        assertThat(aCustomerDTO.getId()).isEqualTo(argumentCaptor.getValue());
     }
 
     @Test
