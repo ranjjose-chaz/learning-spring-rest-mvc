@@ -3,6 +3,7 @@ package guru.springframework.spring6restmvc.controller;
 import guru.springframework.spring6restmvc.entities.Beer;
 import guru.springframework.spring6restmvc.mappers.BeerMapper;
 import guru.springframework.spring6restmvc.model.BeerDTO;
+import guru.springframework.spring6restmvc.model.BeerStyle;
 import guru.springframework.spring6restmvc.repositories.BeerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -72,6 +74,9 @@ class BeerControllerTestIT {
     void saveBeer() {
         BeerDTO beerDTO = BeerDTO.builder()
                 .beerName("New Beer")
+                .beerStyle(BeerStyle.C)
+                .upc("123")
+                .price(BigDecimal.valueOf(12.0))
                 .build();
 
         ResponseEntity responseEntity = beerController.saveBeer(beerDTO);
