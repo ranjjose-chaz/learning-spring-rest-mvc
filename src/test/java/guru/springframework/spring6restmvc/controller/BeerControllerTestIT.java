@@ -5,6 +5,7 @@ import guru.springframework.spring6restmvc.mappers.BeerMapper;
 import guru.springframework.spring6restmvc.model.BeerDTO;
 import guru.springframework.spring6restmvc.model.BeerStyle;
 import guru.springframework.spring6restmvc.repositories.BeerRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,16 +13,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static guru.springframework.spring6restmvc.controller.BeerController.BEER_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 class BeerControllerTestIT {
@@ -35,13 +45,19 @@ class BeerControllerTestIT {
     @Autowired
     BeerMapper beerMapper;
 
-    /*@BeforeEach
+    @Autowired
+    WebApplicationContext wac;
+
+    MockMvc mockMvc;
+
+    @BeforeEach
     void setUp() {
-    }*/
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    }
 
     @Test
     void listBeers() {
-        List<BeerDTO> beerDTOList = beerController.listBeers();
+        List<BeerDTO> beerDTOList = beerController.listBeers(null, null);
         assertThat(beerDTOList.size()).isEqualTo(2413);
 
     }
@@ -51,7 +67,7 @@ class BeerControllerTestIT {
     @Test
     void listBeersEmptyCase() {
         beerRepository.deleteAll();
-        List<BeerDTO> beerDTOList = beerController.listBeers();
+        List<BeerDTO> beerDTOList = beerController.listBeers(null, null);
         assertThat(beerDTOList.size()).isEqualTo(0);
     }
 
@@ -113,6 +129,31 @@ class BeerControllerTestIT {
         Beer updatedBeer = beerRepository.findById(beer.getId()).get();
         assertEquals(updatedBeer.getBeerName(), beerDTO.getBeerName());
     }
+    @Test
+    void testListBeersByStyle() throws Exception {
+        mockMvc.perform(get(BEER_PATH)
+                        .queryParam("beerStyle", BeerStyle.ALE.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(400)));
+    }
+
+    @Test
+    void testListBeersByName() throws Exception {
+        mockMvc.perform(get(BEER_PATH)
+                .queryParam("beerName", "IPA"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(336)));
+    }
+
+    @Test
+    void testListBeersByBeerNameAndStyle() throws Exception {
+        mockMvc.perform(get(BEER_PATH)
+                .queryParam("beerName", "IPA")
+                .queryParam("beerStyle", BeerStyle.ALE.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(11)));
+
+    }
 
     @Transactional
     @Rollback
@@ -130,4 +171,6 @@ class BeerControllerTestIT {
             beerController.deleteById(UUID.randomUUID());
         });
     }
+
+
 }
